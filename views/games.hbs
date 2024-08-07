@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <script src= "https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" 
+            integrity= "sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" 
+            crossorigin="anonymous"></script> 
+</head>
+
+<body id="bd">
+    <nav class="navbar bg-white">
+        <a class="btn btn-secondary ms-3" style="width: 50px;" rel="preload" href="/field"><i class="bi bi-arrow-return-left"></i></a>
+    </nav>
+    <div class="container-fluid d-flex h-100 justify-content-center align-items-center p-0">
+        <div class="d-flex mb-3 flex-column justify-content-center">
+            {{#if error}}
+            <div class="alert alert-danger" role="alert">
+                {{error}}
+            </div>
+            {{/if}}
+            <h1 style="text-align: center;">Список игр</h1>
+            <h3 style="text-align: center;">Количество: {{count}}</h3>
+            {{#if list}}
+            <div class="list-group me-3">
+            <input class="list-group-item list-group-item-action form-control search mb-2"
+                    placeholder="Поиск"></input>
+            <input type="radio" class="btn-check" name="options-base" id="option5" autocomplete="off" checked>
+            <label class="btn mb-2" for="option5">По умолчанию</label>
+            <input type="radio" class="btn-check" name="options-base" id="option6" autocomplete="off">
+            <label class="btn mb-2" for="option6">По алфавиту</label>
+            <div class="maindiv">
+            {{#each list}}
+            <form class="d-flex mb-1 game" action="/editGames" style="width:1000px" method="POST">
+                        <input name="elemID" value="{{@index}}" type=hidden></input>
+                        <input class="list-group-item list-group-item-action form-control gameName"
+                        value="{{this.name}}" name="gameName" style="margin-right: 15px" aria-current="true"></input>
+                        {{#ifEquals this.completed "true"}}
+                        <input type="radio" class="btn-check" name="complete" value="true" id="success-outlined-{{@index}}" autocomplete="off" checked>
+                        <label class="btn btn-outline-success" style="margin-right: 15px" for="success-outlined-{{@index}}">Да</label>
+                        <input type="radio" class="btn-check" name="complete" value="false" id="danger-outlined-{{@index}}" autocomplete="off">
+                        <label class="btn btn-outline-danger" style="margin-right: 15px;" for="danger-outlined-{{@index}}">Нет</label>
+                        {{else}}
+                        <input type="radio" class="btn-check" name="complete" value="true" id="success-outlined-{{@index}}" autocomplete="off">
+                        <label class="btn btn-outline-success" style="margin-right: 15px" for="success-outlined-{{@index}}">Да</label>
+                        <input type="radio" class="btn-check" name="complete" value="false" id="danger-outlined-{{@index}}" autocomplete="off" checked>
+                        <label class="btn btn-outline-danger" style="margin-right: 15px;" for="danger-outlined-{{@index}}">Нет</label>
+                        {{/ifEquals}}
+                        <button class="btn btn-success ms-1" type="submit" name="btnRes" value="CHANGE">Изменить</button>
+                        <button class="btn btn-danger ms-1" type="submit" name="btnRes" value="DELETE">Удалить</button>
+                </form>
+            {{/each}}
+            </div> 
+            </div>
+            {{else}}
+                <div class="p-3 text-primary-emphasis bg-primary-subtle bg-info border border-primary-subtle rounded-3 mb-3">
+                    Пока еще нет пройденных игр!
+                </div>
+            {{/if}}
+            <button class="btn btn-primary mt-3" onclick="showModal()">Добавить игру</button>
+            </div> 
+    </div>
+    <script>
+    function showModal() { 
+        let bodyElem = document.getElementById("bd");
+            bodyElem.innerHTML += `<div id="caution" class="modal" tabindex="-1"> 
+            <div class="modal-dialog modal-dialog-centered"> 
+                <div class="modal-content"> 
+                    <div class="modal-header"> 
+                        <h5 class="modal-title"> 
+                            Добавлеие игры 
+                        </h5> 
+                        <button type="button" 
+                                class="btn-close"
+                                data-bs-dismiss="modal" 
+                                aria-label="Отмена"> 
+                        </button> 
+                    </div> 
+                    <div class="modal-body">  
+                        <form action="/addGame" method="POST" style="display:flex; flex-direction: column; align-items: center;">
+                            <div style="display:flex;">
+                            <input type="textarea" style="margin-right: 15px;" name="gameName" class="form-control" id="gameName" placeholder="Название игры" required>
+                            <p class="me-3" style="margin-right: 15px; margin-top: 15px;">Прошли?</p>
+                            <input type="radio" class="btn-check" name="completed" value="true" id="success-outlined" autocomplete="off" checked>
+                            <label class="btn btn-outline-success" style="margin-right: 15px" for="success-outlined">Да</label>
+                            <input type="radio" class="btn-check" name="completed" value="false" id="danger-outlined" autocomplete="off">
+                            <label class="btn btn-outline-danger" style="margin-right: 15px;" for="danger-outlined">Нет</label>
+                            </div>
+                            <button class="btn btn-primary mt-3" type="submit">Добавить</button>
+                        </form>
+                    </div> 
+                    <div class="modal-footer">
+                        <button type="button" 
+                                class="btn btn-secondary" 
+                                data-bs-dismiss="modal"> 
+                            Отмена 
+                        </button> 
+                    </div> 
+                </div> 
+            </div> 
+        </div> `
+        let modal =  
+            new bootstrap.Modal(document.getElementById('caution')); 
+            modal.show(); 
+    } 
+</script>
+<script>
+                let search = document.querySelector(".search")
+                search.addEventListener("input", (ev)=> {
+                    let inpValue = ev.target.value.toLowerCase()
+                    let gamesList = document.querySelectorAll(".game")
+                    for (const item of gamesList) {
+                        let textItem = item.querySelector(".gameName")
+                        if(!textItem.value.toLowerCase().includes(inpValue)) {
+                            item.classList.add("d-none")
+                        }
+                        else {
+                            item.classList.remove("d-none")
+                        }
+                    }
+                })
+            </script>
+<script>
+                let radioAlphabet = document.querySelector("#option6")
+                let radioDefault = document.querySelector("#option5")
+                let container = document.querySelector(".maindiv")
+                let gameList = document.querySelectorAll(".game")
+                radioAlphabet.addEventListener("click", (ev) => {
+                    container.innerHTML = ""
+                    let gameArray = Array.prototype.slice.call(gameList, 0)
+                    gameArray.sort(function(a, b) {
+                        let aord = a.querySelector(".gameName").value.toLowerCase()
+                        let bord = b.querySelector(".gameName").value.toLowerCase()
+                        if (aord < bord) {
+                            return -1
+                        }
+                        else if (aord > bord) {
+                            return 1
+                        }
+                        else {
+                            return 0
+                        }
+                    });
+                    for (const item of gameArray) {
+                        container.appendChild(item)
+                    }
+                })
+                radioDefault.addEventListener("click", (ev)=> {
+                    container.innerHTML = ""
+                    for (const item of gameList) {
+                        container.appendChild(item)
+                    }
+                })
+            </script>   
+</body>
+</html>

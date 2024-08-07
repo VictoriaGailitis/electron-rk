@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <script src= "https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" 
+            integrity= "sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" 
+            crossorigin="anonymous"> 
+    </script> 
+</head>
+<style>
+          @font-face {
+            font-family: 'Maki Sans';
+            src: url('ofont.ru_Maki Sans.ttf');
+        }
+        html, body {
+            height: 100%;
+            background-image: url('bckgrnd.png');
+            background-repeat: repeat;
+        }
+        .pTheme, .btnCustom {
+          font-family: 'Maki Sans', sans-serif;
+        }
+        .btnCustom {
+          text-align: center;
+        }
+        .main {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+        }
+        .focused {
+            filter: blur(0px);
+        }
+        .blurred {
+            filter: blur(5px);
+        }
+        .navbar {
+          background-image: url('bckgrnd.png');
+          background-repeat: repeat;
+        }
+    </style>
+    <nav class="navbar navbar-light bg-light fixed-top">
+  <div class="container-fluid">
+    <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="offcanvas offcanvas-start" data-bs-backdrop="false" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Меню</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Закрыть"></button>
+      </div>
+      <div class="offcanvas-body">
+        <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+          <li class="nav-item dropdown mb-3">
+            <a class="nav-link dropdown-toggle" href="#" id="offcanvasNavbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Рандомная клетка
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="offcanvasNavbarDropdown">
+              <li><a class="dropdown-item" data-bs-dismiss="offcanvas" onclick="randomAll()">Из всех на поле</a></li>
+              <li><a class="dropdown-item" data-bs-dismiss="offcanvas" onclick="randomOpen()">Из всех открытых</a></li>
+              <li><a class="dropdown-item" data-bs-dismiss="offcanvas" onclick="randomClosed()">Из всех закрытых</a></li>
+              <li><a class="dropdown-item" data-bs-dismiss="offcanvas" onclick="randomGold()">Из всех открытых золотых</a></li>
+              <li><a class="dropdown-item" data-bs-dismiss="offcanvas" onclick="randomWhite()">Из всех открытых белых</a></li>
+              <li><a class="dropdown-item" data-bs-dismiss="offcanvas" onclick="randomCrossed()">Из всех зачеркнутых</a></li>
+              <li><a class="dropdown-item" data-bs-dismiss="offcanvas" onclick="randomUncrossed()">Из всех незачеркнутых</a></li>
+            </ul>
+          </li>
+          <a class="nav-item btn btn-primary mb-3" href="/changeList">Изменить список тем</a>
+          <a class="nav-item btn btn-primary mb-3" href="/gamesList">Список игр</a>
+          <a class="nav-item btn btn-primary mb-3" onclick="showModal3()">Новый раунд</a>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="navbar hearts">
+    {{#repeat args.hearts}}
+    <div class="heart heart-{{@index}} me-2" style="width:40px; height:40px; background-image: url('heart-{{#random 8}}{{/random}}.png');"></div>
+      {{/repeat}}
+      <a class="btn me-3" rel="preload" href="/plusHeart"><p class="btnCustom mt-3">+</p></a>
+      <a class="btn" rel="preload" href="/minusHeart"><p class="btnCustom mt-3">-</p></a>
+  </div>
+</nav>
+
+<body id="bd">
+    <div class="main">
+      <div class="container text-center">
+    <div class="grid" style="display:grid; grid-template-columns:repeat({{args.cols}}, 130px); 
+                grid-template-rows:repeat({{args.rows}}, 130px); grid-gap:25px">
+      {{#each args.cards}}
+      {{#ifEquals this.type "hidden"}}
+      <span class="spanCard spanHid" data-bs-toggle="popover" 
+              data-bs-placement="right" 
+              data-bs-content={{this.descr}} 
+              data-bs-trigger="hover focus"
+              id="span-{{this.id}}">
+      <button class="btn cardBtn" type="button" onclick="myFunc({{this.id}})" id={{this.id}} data-bs-toggle="offcanvas"
+      data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom"
+      style="background-image: url('hidden-{{#random 5}}{{/random}}.png'), url('border-{{#random 5}}{{/random}}-white.png'); width:130px; height:130px; display:flex; justify-content:center; align-items:center;">
+        </button>
+        </span>
+      {{/ifEquals}}
+      {{#ifEquals this.type "open"}}
+      {{#ifEquals this.crossed 0}}
+      <span class="spanCard spanOpen spanUncrossed span-{{this.color}}" data-bs-toggle="popover" 
+              data-bs-placement="right" 
+              data-bs-content={{this.descr}} 
+              data-bs-trigger="hover focus"
+              id="span-{{this.id}}">
+      <button class="btn cardBtn btnTheme" type="button" onclick="myFunc({{this.id}})" id={{this.id}}
+      data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom"
+      style="background-image: url('border-{{#random 5}}{{/random}}-{{this.color}}.png'); width:130px; height:130px; display:flex; justify-content:center; align-items:center;">
+        <p class="pTheme">{{this.category}}</p></button>
+      </span>
+      {{/ifEquals}}
+      {{#ifEquals this.crossed 1}}
+      <span class="spanCard spanOpen spanCrossed span-{{this.color}}" data-bs-toggle="popover" 
+              data-bs-placement="right" 
+              data-bs-content={{this.descr}} 
+              data-bs-trigger="hover focus"
+              id="span-{{this.id}}">
+      <button class="btn cardBtn" type="button" onclick="myFunc({{this.id}})" id={{this.id}} data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom"
+        style="background-image: url('line-{{#random 5}}{{/random}}.png'), url('border-{{#random 5}}{{/random}}-{{this.color}}.png'); width:130px; height:130px; display:flex; justify-content:center; align-items:center;
+        ">
+        <p class="pTheme">{{this.category}}</p>
+        </button>
+        </span>
+      {{/ifEquals}}
+      {{/ifEquals}}
+      {{/each}}
+    </div>
+  </div>
+    </div>
+    <script>
+    function focusElement() {
+      setTimeout(() => {
+          document.body.addEventListener('click', removeFocus);
+      }, 500);
+  }
+  function removeFocus() {
+      const element = document.querySelector('.focused');
+      let blurredElems = document.querySelectorAll('.blurred')
+      element.classList.remove('focused');
+      for (const elem of blurredElems) {
+        elem.classList.remove('blurred');
+      }
+      document.body.removeEventListener('click', removeFocus);
+  }
+  function randomAll() {
+    let allCards = document.querySelectorAll(".spanCard")
+    let chosen_card_id = Math.floor(Math.random()*allCards.length);
+    for (let i = 0; i < allCards.length; i++) {
+      if (i == chosen_card_id) {
+        allCards[i].classList.add("focused")
+      }
+      else {
+        allCards[i].classList.add("blurred")
+      }
+    }
+    focusElement()
+  }
+  function randomOpen() {
+    let allCards = document.querySelectorAll(".spanCard")
+    let openCards = document.querySelectorAll(".spanOpen")
+    if (openCards.length == 0) {
+      return
+    }
+    let chosen_card = openCards[Math.floor(Math.random()*openCards.length)];
+    for (let i = 0; i < openCards.length; i++) {
+      if (openCards[i].id == chosen_card.id) {
+        openCards[i].classList.add("focused")
+      }
+      else {
+        openCards[i].classList.add("blurred")
+      }
+    }
+    for (let i = 0; i < allCards.length; i++) {
+      if (!allCards[i].classList.contains("focused")) {
+        allCards[i].classList.add("blurred")
+      }
+    }
+    focusElement()
+  }
+  function randomClosed() {
+    let allCards = document.querySelectorAll(".spanCard")
+    let closedCards = document.querySelectorAll(".spanHid")
+    if (closedCards.length == 0) {
+      return
+    }
+    let chosen_card = closedCards[Math.floor(Math.random()*closedCards.length)];
+    for (let i = 0; i < closedCards.length; i++) {
+      if (closedCards[i].id == chosen_card.id) {
+        closedCards[i].classList.add("focused")
+      }
+      else {
+        closedCards[i].classList.add("blurred")
+      }
+    }
+    for (let i = 0; i < allCards.length; i++) {
+      if (!allCards[i].classList.contains("focused")) {
+        allCards[i].classList.add("blurred")
+      }
+    }
+    focusElement()
+  }
+  function randomGold() {
+    let allCards = document.querySelectorAll(".spanCard")
+    let goldCards = document.querySelectorAll(".span-yellow")
+    if (goldCards.length == 0) {
+      return
+    }
+    let chosen_card = goldCards[Math.floor(Math.random()*goldCards.length)];
+    for (let i = 0; i < goldCards.length; i++) {
+      if (goldCards[i].id == chosen_card.id) {
+        goldCards[i].classList.add("focused")
+      }
+      else {
+        goldCards[i].classList.add("blurred")
+      }
+    }
+    for (let i = 0; i < allCards.length; i++) {
+      if (!allCards[i].classList.contains("focused")) {
+        allCards[i].classList.add("blurred")
+      }
+    }
+    focusElement()
+  }
+  function randomWhite() {
+    let allCards = document.querySelectorAll(".spanCard")
+    let whiteCards = document.querySelectorAll(".span-white")
+    if (whiteCards.length == 0) {
+      return
+    }
+    let chosen_card = whiteCards[Math.floor(Math.random()*whiteCards.length)];
+    for (let i = 0; i < whiteCards.length; i++) {
+      if (whiteCards[i].id == chosen_card.id) {
+        whiteCards[i].classList.add("focused")
+      }
+      else {
+        whiteCards[i].classList.add("blurred")
+      }
+    }
+    for (let i = 0; i < allCards.length; i++) {
+      if (!allCards[i].classList.contains("focused")) {
+        allCards[i].classList.add("blurred")
+      }
+    }
+    focusElement()
+  }
+  function randomCrossed() {
+    let allCards = document.querySelectorAll(".spanCard")
+    let crossedCards = document.querySelectorAll(".spanCrossed")
+    if (crossedCards.length == 0) {
+      return
+    }
+    let chosen_card = crossedCards[Math.floor(Math.random()*crossedCards.length)];
+    for (let i = 0; i < crossedCards.length; i++) {
+      if (crossedCards[i].id == chosen_card.id) {
+        crossedCards[i].classList.add("focused")
+      }
+      else {
+        crossedCards[i].classList.add("blurred")
+      }
+    }
+    for (let i = 0; i < allCards.length; i++) {
+      if (!allCards[i].classList.contains("focused")) {
+        allCards[i].classList.add("blurred")
+      }
+    }
+    focusElement()
+  }
+  function randomUncrossed() {
+    let allCards = document.querySelectorAll(".spanCard")
+    let uncrossedCards = document.querySelectorAll(".spanUncrossed")
+    if (uncrossedCards.length == 0) {
+      return
+    }
+    let chosen_card = uncrossedCards[Math.floor(Math.random()*uncrossedCards.length)];
+    for (let i = 0; i < uncrossedCards.length; i++) {
+      if (uncrossedCards[i].id == chosen_card.id) {
+        uncrossedCards[i].classList.add("focused")
+      }
+      else {
+        uncrossedCards[i].classList.add("blurred")
+      }
+    }
+    for (let i = 0; i < allCards.length; i++) {
+      if (!allCards[i].classList.contains("focused")) {
+        allCards[i].classList.add("blurred")
+      }
+    }
+    focusElement()
+  }
+</script>
+  <script> 
+        var popoverTrigger =  
+            [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]')) 
+        var popoverList = popoverTrigger.map(function (popoverTrigger2) { 
+        return new bootstrap.Popover(popoverTrigger2) 
+        }) 
+    </script>
+    <div class="offcanvas offcanvas-bottom" data-bs-backdrop="false" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="offcanvasBottomLabel">Изменить клетку</h5>
+    <button type="button" id="trigger-btn" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Закрыть"></button>
+  </div>
+  <div class="offcanvas-body small">
+    <div class="d-flex align-items-center justify-content-center flex-column" id="box">
+      <script>
+        function myFunc(elemId) {
+          let boxElem = document.getElementById("box");
+          boxElem.innerHTML = `<div style="display:flex; margin-bottom: 50px;">
+            <a class="btn btn-outline-primary" style="margin-right:100px;" rel="preload" href="/changeColor?id=${elemId} ">Сменить цвет</a>
+            <a class="btn btn-outline-primary" style="margin-right:100px;" rel="preload" href="/changeCross?id=${elemId}">Зачеркнуть/вычеркнуть</a>
+            <a class="btn btn-outline-primary " style="margin-right:100px;" onclick="showModal(${elemId})">Открыть/закрыть</a>
+            <a class="btn btn-outline-primary" onclick="showModal2(${elemId})">Рандом темы</a></div>
+            <div style="display:flex;">
+                <form action="/makeDescription" style="display:flex;" method="POST">
+                <input name="cardId" value=${elemId} type=hidden></input>
+                <label for="description" style="margin-right:30px;" class="form-label">Описание к клетке</label>
+                <input type="textarea" name="description" style="margin-right:30px;" class="form-control" id="description" placeholder="Описание">
+                <button type="submit" class="btn btn-primary">Добавить/Изменить</button>
+                </form>
+            </div>
+            ` 
+        }
+      </script>
+    </div>
+  </div>
+</div>
+<script>
+    function showModal(elemId) { 
+      let bodyElem = document.getElementById("bd");
+          bodyElem.innerHTML += `<div id="caution" class="modal" tabindex="-1"> 
+            <div class="modal-dialog modal-dialog-centered"> 
+                <div class="modal-content"> 
+                    <div class="modal-header"> 
+                        <h5 class="modal-title"> 
+                            Внимание! 
+                        </h5> 
+                        <button type="button" 
+                                class="btn-close"
+                                data-bs-dismiss="modal" 
+                                aria-label="Отмена"
+                                data-bs-toggle="offcanvas"
+                                data-bs-target="#offcanvasBottom"
+                                aria-controls="offcanvasBottom"> 
+                        </button> 
+                    </div> 
+                    <div class="modal-body"> 
+                        <p> 
+                            Точно открыть/закрыть клетку?
+                        </p> 
+                    </div> 
+                    <div class="modal-footer">
+                      <a 
+                                class="btn btn-primary" 
+                                href="/changeOpen?id=${elemId}"
+                                rel="preload"> 
+                            Подтвердить 
+                        </a>  
+                        <button type="button" 
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal"
+                                data-bs-toggle="offcanvas"
+                                data-bs-target="#offcanvasBottom"
+                                aria-controls="offcanvasBottom"> 
+                            Отмена 
+                        </button> 
+                    </div> 
+                </div> 
+            </div> 
+        </div> `
+        let modal =  
+            new bootstrap.Modal(document.getElementById('caution')); 
+          modal.show(); 
+    } 
+</script>
+<script>
+    function showModal2(elemId) { 
+      let bodyElem = document.getElementById("bd");
+          bodyElem.innerHTML += `<div id="caution2" class="modal" tabindex="-1"> 
+            <div class="modal-dialog modal-dialog-centered"> 
+                <div class="modal-content"> 
+                    <div class="modal-header"> 
+                        <h5 class="modal-title"> 
+                            Внимание! 
+                        </h5> 
+                        <button type="button" 
+                                class="btn-close"
+                                data-bs-dismiss="modal" 
+                                aria-label="Отмена"
+                                data-bs-toggle="offcanvas"
+                                data-bs-target="#offcanvasBottom"
+                                aria-controls="offcanvasBottom"> 
+                        </button> 
+                    </div> 
+                    <div class="modal-body"> 
+                        <p> 
+                            Точно поменять тему?
+                        </p> 
+                    </div> 
+                    <div class="modal-footer">
+                      <a 
+                                class="btn btn-primary" 
+                                href="/changeTheme?id=${elemId}"
+                                rel="preload"> 
+                            Подтвердить 
+                        </a>  
+                        <button type="button" 
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal"
+                                data-bs-toggle="offcanvas"
+                                data-bs-target="#offcanvasBottom"
+                                aria-controls="offcanvasBottom"> 
+                            Отмена 
+                        </button> 
+                    </div> 
+                </div> 
+            </div> 
+        </div> `
+        let modal =  
+            new bootstrap.Modal(document.getElementById('caution2')); 
+          modal.show();
+    } 
+</script>
+<script>
+    function showModal3() { 
+      let bodyElem = document.getElementById("bd");
+          bodyElem.innerHTML += `<div id="caution3" class="modal" tabindex="-1"> 
+            <div class="modal-dialog modal-dialog-centered"> 
+                <div class="modal-content"> 
+                    <div class="modal-header"> 
+                        <h5 class="modal-title"> 
+                            Внимание! 
+                        </h5> 
+                        <button type="button" 
+                                class="btn-close"
+                                data-bs-dismiss="modal" 
+                                aria-label="Отмена"
+                                data-bs-toggle="offcanvas"
+                                data-bs-target="#offcanvasNavbar"
+                                aria-controls="offcanvasNavbar"> 
+                        </button> 
+                    </div> 
+                    <div class="modal-body"> 
+                        <p> 
+                            Точно начать новый раунд?
+                        </p> 
+                    </div> 
+                    <div class="modal-footer">
+                      <a 
+                                class="btn btn-primary" 
+                                href="/newGame"> 
+                            Подтвердить 
+                        </a>  
+                        <button type="button" 
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal"
+                                data-bs-toggle="offcanvas"
+                                data-bs-target="#offcanvasNavbar"
+                                aria-controls="offcanvasNavbar"> 
+                            Отмена 
+                        </button> 
+                    </div> 
+                </div> 
+            </div> 
+        </div> `
+        let modal =  
+            new bootstrap.Modal(document.getElementById('caution3')); 
+          modal.show();
+    } 
+</script>
+<script> 
+        var offcanvasElement = document.getElementById("offcanvasBottom"); 
+        var offcanvas = new bootstrap.Offcanvas(offcanvasElement, data-bs-backdrop="false"); 
+        let button = document.getElementById("trigger-btn"); 
+        button.addEventListener("click", () => { 
+            return offcanvas.toggle(); 
+          ; 
+        });    
+    </script>
+  <script>
+        let buttonTheme = document.querySelectorAll(".cardBtn")
+        let pTheme = document.querySelectorAll(".pTheme")
+        for (let i = 0; i < buttonTheme.length; i++) {
+          let fontSize = parseInt(window.getComputedStyle(pTheme[i]).fontSize);
+          console.log(pTheme[i])
+          console.log(pTheme[i].scrollWidth)
+          if (pTheme[i].scrollWidth > 103 || pTheme[i].scrollHeight > 103) {
+            pTheme[i].style.fontSize = "11px"
+          }
+        }
+    </script>
+</body>
+</html>
