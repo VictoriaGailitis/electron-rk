@@ -1,0 +1,50 @@
+@font-face {
+    font-family: 'Maki Sans';
+    src: url('/fonts/ofont.ru_Maki Sans.ttf');
+}
+html, body {
+    height: 100%;
+    background-image: url('/images/bckgrnd.png');
+    background-repeat: repeat;
+}
+.pTheme, .btnCustom {
+    font-family: 'Maki Sans', sans-serif;
+}
+.btnCustom {
+    text-align: center;
+}
+.main {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+.focused {
+    filter: blur(0px);
+}
+.blurred {
+    filter: blur(5px);
+}
+.navbar {
+    background-image: url('/images/bckgrnd.png');
+    background-repeat: repeat;
+}
+
+.heart {
+    width:40px;
+    height:40px;
+}
+
+.grid {
+    display:grid;
+    grid-gap:25px;
+}
+
+.cardBtn {
+    width:130px;
+    height:130px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}

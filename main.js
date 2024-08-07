@@ -7,7 +7,7 @@ const fsExtra = require('fs-extra');
 let mainWindow;
 
 const {server} = require('./server.js')
-const filePathCategories = 'db/categories_temp.db'
+const filePathCategories = 'db/categories.db'
 const filePathField = 'db/field.db'
 const filePathGames = 'db/played_games.db'
 const backupFolderPath = 'backups'

@@ -1,0 +1,15 @@
+.btn-back {
+    width: 50px;
+}
+
+h1, h3 {
+    text-align: center;
+}
+
+.themeBtn, .theme {
+    width:1000px
+}
+
+.gameName, .btn-outline-success, .btn-outline-danger {
+    margin-right: 15px;
+}
