@@ -3,18 +3,30 @@ const { spawn } = require('child_process');
 const fs = require('fs');
 const cron = require('cron');
 const fsExtra = require('fs-extra');
+const path = require('path');
 
 let mainWindow;
+exports.prod = app.isPackaged
 
-const {server} = require('./server.js')
-const filePathCategories = 'db/categories.db'
-const filePathField = 'db/field.db'
-const filePathGames = 'db/played_games.db'
-const backupFolderPath = 'backups'
+const {server} = require(`${__dirname}/server.js`)
+let filePathCategories, filePathField, filePathGames, backupFolderPath
+if (app.isPackaged == true) {
+  filePathCategories = path.join(__dirname, '..', 'db', 'categories.db')
+  filePathField = path.join(__dirname, '..', 'db', 'field.db')
+  filePathGames = path.join(__dirname, '..', 'db', 'played_games.db')
+  backupFolderPath = path.join(__dirname, '..', 'backups')
+}
+else {
+  filePathCategories = `${__dirname}/db/categories.db`
+  filePathField = `${__dirname}/db/field.db`
+  filePathGames = `${__dirname}/db/played_games.db`
+  backupFolderPath = `${__dirname}/backups`
+}
 
 function createWindow() {
   mainWindow = new BrowserWindow({width: 1600, height: 1000});
   mainWindow.loadURL(`http://localhost:60838`);
+  mainWindow.menuBarVisible = false
 
   mainWindow.on('closed', function () {
     mainWindow = null;
@@ -23,7 +35,7 @@ function createWindow() {
 
 app.on('ready', () => {
   // Start the Express server as a child process
-  const server = spawn('node', ['server.js']);
+  const server = spawn('node', ['server.js'], {shell: true});
   server.stdout.on('data', (data) => {
     console.log(`Server: ${data}`);
   });

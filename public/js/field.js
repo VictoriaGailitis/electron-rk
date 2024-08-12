@@ -1,3 +1,22 @@
+window.addEventListener("load", (event) => {
+    let buttonTheme = document.querySelectorAll(".cardBtn")
+    let pTheme = document.querySelectorAll(".pTheme")
+    let buttonThemeLength = buttonTheme.length
+    for (let i = 0; i < buttonThemeLength; i++) {
+    //console.log(pTheme[i])
+    //console.log(pTheme[i].scrollWidth)
+    //console.log(pTheme[i].scrollHeight)
+        if (pTheme[i].scrollWidth > 107 || pTheme[i].scrollHeight > 119) {
+            pTheme[i].style.fontSize = "0.9rem"
+            let currSize = 0.9
+            while (pTheme[i].scrollWidth > 107 || pTheme[i].scrollHeight > 119) {
+                currSize = currSize - 0.15
+                pTheme[i].style.fontSize = `${currSize}rem`
+            }
+        }
+    }
+});  
+
 function focusElement() {
     setTimeout(() => {
         document.body.addEventListener('click', removeFocus);
@@ -334,11 +353,3 @@ var popoverTrigger =
         var popoverList = popoverTrigger.map(function (popoverTrigger2) { 
         return new bootstrap.Popover(popoverTrigger2) 
         }) 
-
-let buttonTheme = document.querySelectorAll(".cardBtn")
-let pTheme = document.querySelectorAll(".pTheme")
-for (let i = 0; i < buttonTheme.length; i++) {
-    if (pTheme[i].scrollWidth > 104 || pTheme[i].scrollHeight > 104) {
-        pTheme[i].style.fontSize = "11px"
-    }
-}

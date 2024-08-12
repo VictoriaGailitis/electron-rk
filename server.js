@@ -2,23 +2,39 @@ const express = require('express');
 const app = express();
 const port = 60838;
 const fs = require('fs')
+const path = require('path');
+
 
 app.listen(port, function () {
     console.log(`http://localhost:${port}`);
 })
 
-app.use(express.static(`public`));
+
+app.use(express.static(`${__dirname}/public`));
 app.use(express.urlencoded({extended:true}))
 
 
 const hbs = require('hbs');
-app.set('views', 'views');
+app.set('views', `${__dirname}/views`);
 app.set('view engine', 'hbs');
 
+const imp = require('./main.js')
+let filePathCategories, filePathField, filePathGames
+if (imp.prod == true){
+    filePathCategories = path.join(__dirname, '..', 'db', 'categories.db')
+    filePathField = path.join(__dirname, '..', 'db', 'field.db')
+    filePathGames = path.join(__dirname, '..', 'db', 'played_games.db')
+}
+else {
+    filePathCategories = `${__dirname}/db/categories.db`
+    filePathField = `${__dirname}/db/field.db`
+    filePathGames = `${__dirname}/db/played_games.db`
+}
+
 let Datastore = require('nedb')
-let categories = new Datastore({ filename: './db/categories.db', autoload: true })
-let field = new Datastore({ filename: './db/field.db', autoload: true })
-let played_games = new Datastore({ filename: './db/played_games.db', autoload: true })
+let categories = new Datastore({ filename: filePathCategories, autoload: true })
+let field = new Datastore({ filename: filePathField, autoload: true })
+let played_games = new Datastore({ filename: filePathGames, autoload: true })
 
 
 Array.prototype.random = function () {
@@ -27,6 +43,10 @@ Array.prototype.random = function () {
 
 hbs.registerHelper('ifEquals', function(arg1, arg2, options) {
     return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
+});
+
+hbs.registerHelper('ifNotEquals', function(arg1, arg2, options) {
+    return (arg1 != arg2) ? options.fn(this) : options.inverse(this);
 });
 
 hbs.registerHelper('random', function(arg) {
@@ -51,7 +71,9 @@ hbs.registerHelper("repeat", function (times, opts) {
 });
 
 
-
+function randomFloor(num) {
+    return Math.floor(Math.random() * (num - 1) + 1);
+}
 
 function getRandomSubarray(arr, size) {
     var shuffled = arr.slice(0), i = arr.length, temp, index;
@@ -97,7 +119,7 @@ app.post('/', function(req,res) {
     let open = Number(rows) * Number (cols) - Number(hidden)
     let golden = req.body.golden
     let white = Number(rows) * Number (cols) - Number(golden)
-    let hearts = req.body.hearts
+    let heartsNum = Number(req.body.hearts)
     if (Number(hidden) > Number(rows) * Number (cols)) {
         return res.render('new', {error: "Количество закрытых клеток не может быть больше " 
         + String(Number(rows) * Number (cols)) + "!"})
@@ -106,7 +128,11 @@ app.post('/', function(req,res) {
         return res.render('new', {error: "Количество золотых клеток не может быть больше " 
         + String(Number(rows) * Number (cols)) + "!"})
     }
-    field.insert({"flag":1, "hearts": Number(hearts), "rows": rows, "cols": cols, "hidden": hidden,
+    let hearts = []
+    for (let i = 0; i < heartsNum; i++) {
+        hearts.push(`heart-${randomFloor(8)}.png`)
+    }
+    field.insert({"flag":1, "hearts": hearts, "rows": rows, "cols": cols, "hidden": hidden,
                     "open": open, "white": white, "golden": golden, "cards": 0})
     
     let types = []
@@ -123,9 +149,18 @@ app.post('/', function(req,res) {
         let res1 = getRandomSubarray((doc.free), Number(rows) * Number(cols))
         let res2 = []
         for (let i = 0; i < res1.length; i++) {
-            res2.push({"category": res1[i], "type": types.splice(Math.floor(Math.random() * types.length), 1)[0],
-                        "color": colors.splice(Math.floor(Math.random() * colors.length), 1)[0], "crossed": 0,
-                        "descr": "-", "id": i})
+            let obj = {"category": res1[i], "type": types.splice(Math.floor(Math.random() * types.length), 1)[0],
+                "color": colors.splice(Math.floor(Math.random() * colors.length), 1)[0], "crossed": 0,
+                "hiddenBackground": `hidden-${randomFloor(5)}.png`, "crossedBackground": `line-${randomFloor(5)}.png`,
+                "whiteBackground": `border-${randomFloor(5)}-white.png`, "yellowBackground": `border-${randomFloor(5)}-yellow.png`,
+                "descr": "", "id": i}
+            if (obj.color == "white") {
+                obj.currentBackground = obj.whiteBackground
+            }
+            else {
+                obj.currentBackground = obj.yellowBackground
+            }
+            res2.push(obj)
         }
         categories.update({"flag": 1}, {$pull: {"free": {$in: res1}}}, {multi: false, upsert: false}, function () {})
         categories.update({"flag": 1}, {$set: {"chosen": res1}}, {multi: false, upsert: false}, function () {})
@@ -146,9 +181,12 @@ app.get('/changeColor', function(req,res) {
     field.findOne({flag: 1}).exec(function(err, result) {
         let cardArr = result.cards
         if (cardArr[id].color == "white") {
-            cardArr[id].color = "yellow" }
+            cardArr[id].color = "yellow"
+            cardArr[id].currentBackground = cardArr[id].yellowBackground
+        }
         else {
             cardArr[id].color = "white"
+            cardArr[id].currentBackground = cardArr[id].whiteBackground
         }
         field.update({"flag": 1}, { $set: { "cards": cardArr} }
                         , {multi: false, upsert: false}, function () {})
@@ -202,7 +240,6 @@ app.post('/makeDescription', function(req,res) {
     let id = req.body.cardId;
     let descr = req.body.description
     field.findOne({}).exec(function(err, result) {
-
         result.cards[id].descr = descr
         field.remove({}, { multi: true }, function (err, numRemoved) {
         });
@@ -275,7 +312,9 @@ app.post('/editList', function(req,res) {
 
 app.get('/plusHeart', function(req,res) {
     field.findOne({}).exec(function(err, result) {
-        field.update({"flag": 1}, { $set: { "hearts":  result.hearts + 1} }
+        let newHearts = result.hearts
+        newHearts.push(`heart-${randomFloor(8)}.png`)
+        field.update({"flag": 1}, { $set: { "hearts":  newHearts} }
                         , {multi: false, upsert: false}, function () {})
     })
     res.redirect('field')
@@ -283,8 +322,10 @@ app.get('/plusHeart', function(req,res) {
 
 app.get('/minusHeart', function(req,res) {
     field.findOne({}).exec(function(err, result) {
-        if (result.hearts > 0) {
-            field.update({"flag": 1}, { $set: { "hearts":  result.hearts - 1} }
+        if (result.hearts.length > 0) {
+            let newHearts = result.hearts
+            newHearts.pop()
+            field.update({"flag": 1}, { $set: { "hearts":  newHearts} }
                         , {multi: false, upsert: false}, function () {})
         }
     })

@@ -15,7 +15,7 @@
     </script>
     <script src="js/field.js" defer></script>
 </head>
-    <nav class="navbar navbar-light bg-light fixed-top">
+      <nav class="navbar navbar-light bg-light fixed-top">
   <div class="container-fluid">
     <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
       <span class="navbar-toggler-icon"></span>
@@ -49,53 +49,58 @@
     </div>
   </div>
   <div class="navbar hearts">
-    {{#repeat args.hearts}}
-    <div class="heart heart-{{@index}} me-2" style="background-image: url('images/heart-{{#random 8}}{{/random}}.png');"></div>
-      {{/repeat}}
+    {{#each args.hearts}}
+    <div class="heart heart-{{@index}} me-2" style="background-image: url('images/{{this}}');"></div>
+      {{/each}}
       <a class="btn me-3" rel="preload" href="/plusHeart"><p class="btnCustom mt-3">+</p></a>
       <a class="btn" rel="preload" href="/minusHeart"><p class="btnCustom mt-3">-</p></a>
   </div>
 </nav>
-
 <body id="bd">
     <div class="main">
-      <div class="container text-center">
-    <div class="grid" style="grid-template-columns:repeat({{args.cols}}, 130px); 
-                grid-template-rows:repeat({{args.rows}}, 130px);">
+      <div class="container-fluid container-fluid2">
+    <div class="grid" style="grid-template-columns:repeat({{args.cols}}, auto); 
+                grid-template-rows:repeat({{args.rows}}, auto);">
       {{#each args.cards}}
       {{#ifEquals this.type "hidden"}}
+      {{#ifNotEquals this.descr ""}}
       <span class="spanCard spanHid" data-bs-toggle="popover" 
               data-bs-placement="right" 
-              data-bs-content={{this.descr}} 
-              data-bs-trigger="hover focus"
+              data-bs-content="{{this.descr}}"
+              data-bs-trigger="hover"
               id="span-{{this.id}}">
+      {{/ifNotEquals}}
       <button class="btn cardBtn" type="button" onclick="myFunc({{this.id}})" id={{this.id}} data-bs-toggle="offcanvas"
       data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom"
-      style="background-image: url('images/hidden-{{#random 5}}{{/random}}.png'), url('images/border-{{#random 5}}{{/random}}-white.png');">
+      style="background-image: url('images/{{this.hiddenBackground}}'), url('images/{{this.whiteBackground}}');">
         </button>
         </span>
       {{/ifEquals}}
       {{#ifEquals this.type "open"}}
       {{#ifEquals this.crossed 0}}
+      {{#ifNotEquals this.descr ""}}
       <span class="spanCard spanOpen spanUncrossed span-{{this.color}}" data-bs-toggle="popover" 
               data-bs-placement="right" 
-              data-bs-content={{this.descr}} 
-              data-bs-trigger="hover focus"
+              data-bs-content="{{this.descr}}"
+              data-bs-trigger="hover"
               id="span-{{this.id}}">
+      {{/ifNotEquals}}
       <button class="btn cardBtn btnTheme" type="button" onclick="myFunc({{this.id}})" id={{this.id}}
       data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom"
-      style="background-image: url('images/border-{{#random 5}}{{/random}}-{{this.color}}.png');">
+      style="background-image: url('images/{{this.currentBackground}}');">
         <p class="pTheme">{{this.category}}</p></button>
       </span>
       {{/ifEquals}}
       {{#ifEquals this.crossed 1}}
+      {{#ifNotEquals this.descr ""}}
       <span class="spanCard spanOpen spanCrossed span-{{this.color}}" data-bs-toggle="popover" 
               data-bs-placement="right" 
-              data-bs-content={{this.descr}} 
-              data-bs-trigger="hover focus"
+              data-bs-content="{{this.descr}}" 
+              data-bs-trigger="hover"
               id="span-{{this.id}}">
+      {{/ifNotEquals}}
       <button class="btn cardBtn" type="button" onclick="myFunc({{this.id}})" id={{this.id}} data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom"
-        style="background-image: url('images/line-{{#random 5}}{{/random}}.png'), url('images/border-{{#random 5}}{{/random}}-{{this.color}}.png');">
+        style="background-image: url('images/{{this.crossedBackground}}'), url('images/{{this.currentBackground}}');">
         <p class="pTheme">{{this.category}}</p>
         </button>
         </span>
