@@ -26,6 +26,8 @@ html, body {
 
 .pTheme, .btnCustom {
     font-family: 'Maki Sans', sans-serif;
+    hyphens: auto;
+    hyphenate-limit-chars: 11;
 }
 .btnCustom {
     text-align: center;

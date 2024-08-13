@@ -1,21 +1,22 @@
-window.addEventListener("load", (event) => {
-    let buttonTheme = document.querySelectorAll(".cardBtn")
-    let pTheme = document.querySelectorAll(".pTheme")
-    let buttonThemeLength = buttonTheme.length
-    for (let i = 0; i < buttonThemeLength; i++) {
-    //console.log(pTheme[i])
-    //console.log(pTheme[i].scrollWidth)
-    //console.log(pTheme[i].scrollHeight)
-        if (pTheme[i].scrollWidth > 107 || pTheme[i].scrollHeight > 119) {
-            pTheme[i].style.fontSize = "0.9rem"
-            let currSize = 0.9
-            while (pTheme[i].scrollWidth > 107 || pTheme[i].scrollHeight > 119) {
-                currSize = currSize - 0.15
-                pTheme[i].style.fontSize = `${currSize}rem`
+/* window.addEventListener("load", (event) => {
+        let buttonTheme = document.querySelectorAll(".cardBtn")
+        let pTheme = document.querySelectorAll(".pTheme")
+        let buttonThemeLength = buttonTheme.length
+        for (let i = 0; i < buttonThemeLength; i++) {
+        //console.log(pTheme[i])
+        //console.log(pTheme[i].scrollWidth)
+        //console.log(pTheme[i].scrollHeight)
+            if (pTheme[i].scrollWidth > 107 || pTheme[i].scrollHeight > 119) {
+                pTheme[i].style.fontSize = "0.9rem"
+                let currSize = 0.9
+                while (pTheme[i].scrollWidth > 107 || pTheme[i].scrollHeight > 119) {
+                    currSize = currSize - 0.15
+                    pTheme[i].style.fontSize = `${currSize}rem`
+                }
             }
         }
-    }
-});  
+}); */
+
 
 function focusElement() {
     setTimeout(() => {
