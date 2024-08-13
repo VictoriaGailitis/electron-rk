@@ -1,4 +1,4 @@
-/* window.addEventListener("load", (event) => {
+window.addEventListener("load", (event) => {
         let buttonTheme = document.querySelectorAll(".cardBtn")
         let pTheme = document.querySelectorAll(".pTheme")
         let buttonThemeLength = buttonTheme.length
@@ -15,7 +15,7 @@
                 }
             }
         }
-}); */
+});
 
 
 function focusElement() {
