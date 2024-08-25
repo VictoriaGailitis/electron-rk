@@ -33,7 +33,7 @@ function removeFocus() {
     document.body.removeEventListener('click', removeFocus);
 }
 function randomAll() {
-    let allCards = document.querySelectorAll(".spanCard")
+    let allCards = document.querySelectorAll(".cardBtn")
     let chosen_card_id = Math.floor(Math.random()*allCards.length);
     for (let i = 0; i < allCards.length; i++) {
         if (i == chosen_card_id) {
@@ -47,8 +47,8 @@ function randomAll() {
 }
 
 function randomOpen() {
-    let allCards = document.querySelectorAll(".spanCard")
-    let openCards = document.querySelectorAll(".spanOpen")
+    let allCards = document.querySelectorAll(".cardBtn")
+    let openCards = document.querySelectorAll(".cardOpen")
     if (openCards.length == 0) {
         return
     }
@@ -70,8 +70,8 @@ function randomOpen() {
 }
 
 function randomClosed() {
-    let allCards = document.querySelectorAll(".spanCard")
-    let closedCards = document.querySelectorAll(".spanHid")
+    let allCards = document.querySelectorAll(".cardBtn")
+    let closedCards = document.querySelectorAll(".cardHid")
     if (closedCards.length == 0) {
         return
     }
@@ -93,8 +93,8 @@ function randomClosed() {
 }
 
 function randomGold() {
-    let allCards = document.querySelectorAll(".spanCard")
-    let goldCards = document.querySelectorAll(".span-yellow")
+    let allCards = document.querySelectorAll(".cardBtn")
+    let goldCards = document.querySelectorAll(".card-yellow")
     if (goldCards.length == 0) {
         return
     }
@@ -116,8 +116,8 @@ function randomGold() {
 }
 
 function randomWhite() {
-    let allCards = document.querySelectorAll(".spanCard")
-    let whiteCards = document.querySelectorAll(".span-white")
+    let allCards = document.querySelectorAll(".cardBtn")
+    let whiteCards = document.querySelectorAll(".card-white")
     if (whiteCards.length == 0) {
         return
     }
@@ -139,8 +139,8 @@ function randomWhite() {
 }
 
 function randomCrossed() {
-    let allCards = document.querySelectorAll(".spanCard")
-    let crossedCards = document.querySelectorAll(".spanCrossed")
+    let allCards = document.querySelectorAll(".cardBtn")
+    let crossedCards = document.querySelectorAll(".cardCrossed")
     if (crossedCards.length == 0) {
         return
     }
@@ -162,8 +162,8 @@ function randomCrossed() {
 }
 
 function randomUncrossed() {
-    let allCards = document.querySelectorAll(".spanCard")
-    let uncrossedCards = document.querySelectorAll(".spanUncrossed")
+    let allCards = document.querySelectorAll(".cardBtn")
+    let uncrossedCards = document.querySelectorAll(".cardUncrossed")
     if (uncrossedCards.length == 0) {
         return
     }

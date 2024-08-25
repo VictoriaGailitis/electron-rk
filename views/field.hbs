@@ -57,7 +57,7 @@
       <a class="btn" rel="preload" href="/minusHeart"><p class="btnCustom mt-3">-</p></a>
   </div>
 </nav>
-<body id="bd">
+<body id="bd" class="body">
     <div class="main">
       <div class="container-fluid container-fluid2">
     <div class="grid" style="grid-template-columns:repeat({{args.cols}}, auto); 
@@ -71,7 +71,7 @@
               data-bs-trigger="hover"
               id="span-{{this.id}}">
       {{/ifNotEquals}}
-      <button class="btn cardBtn" type="button" onclick="myFunc({{this.id}})" id={{this.id}} data-bs-toggle="offcanvas"
+      <button class="btn cardBtn cardHid" type="button" onclick="myFunc({{this.id}})" id={{this.id}} data-bs-toggle="offcanvas"
       data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom"
       style="background-image: url('images/{{this.hiddenBackground}}'), url('images/{{this.whiteBackground}}');">
         </button>
@@ -86,7 +86,7 @@
               data-bs-trigger="hover"
               id="span-{{this.id}}">
       {{/ifNotEquals}}
-      <button class="btn cardBtn btnTheme" type="button" onclick="myFunc({{this.id}})" id={{this.id}}
+      <button class="btn cardBtn cardOpen cardUncrossed card-{{this.color}} btnTheme" type="button" onclick="myFunc({{this.id}})" id={{this.id}}
       data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom"
       style="background-image: url('images/{{this.currentBackground}}');">
         <p class="pTheme">{{this.category}}</p></button>
@@ -100,7 +100,7 @@
               data-bs-trigger="hover"
               id="span-{{this.id}}">
       {{/ifNotEquals}}
-      <button class="btn cardBtn" type="button" onclick="myFunc({{this.id}})" id={{this.id}} data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom"
+      <button class="btn cardBtn cardOpen cardCrossed card-{{this.color}}" type="button" onclick="myFunc({{this.id}})" id={{this.id}} data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom"
         style="background-image: url('images/{{this.crossedBackground}}'), url('images/{{this.currentBackground}}');">
         <p class="pTheme">{{this.category}}</p>
         </button>
